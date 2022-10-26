@@ -2,7 +2,9 @@ import type { ZodTypeAny } from "zod";
 
 import type { Cls } from "../common-types";
 
-export type RawOptions = { schema?: ZodTypeAny };
+export type AnyOptions = { type?: string };
+
+export type RawOptions = { schema: ZodTypeAny };
 
 export type StringOptions = {
   minLength?: number;
@@ -19,6 +21,7 @@ export type StringOptions = {
 };
 
 export type NumberOptions = {
+  type?: "double" | "decimal" | "int" | "long";
   minimum?: number;
   maximum?: number;
   multipleOf?: number;
@@ -42,26 +45,26 @@ export type SetOptions = {
 
 export type MapOptions = { keys?: Cls; values?: Cls };
 
-export type EnumOptions = { values?: readonly string[] };
-
-export type NativeEnumPropOptions = {
-  values?: {
-    [key: string]: number | string;
-    [id: number]: string;
-  };
-};
+export type EnumOptions =
+  | { values: readonly string[] }
+  | {
+      values: {
+        [key: string]: number | string;
+        [numericKey: number]: string;
+      };
+    };
 
 export type LiteralOptions = {
   value: any;
 };
 
 export type PropOptions =
+  | AnyOptions
   | RawOptions
   | StringOptions
+  | EnumOptions
   | NumberOptions
   | ObjectOptions
   | ArrayOptions
   | SetOptions
-  | MapOptions
-  | EnumOptions
-  | NativeEnumPropOptions;
+  | MapOptions;
