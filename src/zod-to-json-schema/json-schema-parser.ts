@@ -45,23 +45,12 @@ const PrimitiveZodTypeMappings = {
 
 type DefParser = (def?: any) => JSONSchema;
 
-const getBSONTypeHintFromDescription = (description: string) => {
-  const match = description.match(/\[bsonType:(\w+)\]$/);
-  if (!match) return null;
-  return {
-    bsonType: match[1] as JSONSchemaBSONType,
-    description: description.substring(0, match.index),
-  };
-};
-
 const applyTypeHint = (def: any, schema: any) => {
-  if (def.description) {
-    const hint = getBSONTypeHintFromDescription(def.description);
-    if (hint) {
-      def.description = hint.description;
-      schema.bsonType = hint.bsonType;
-    }
-  }
+  if (!def.description) return;
+  const match = def.description.match(/\[bsonType:(\w+)\]$/);
+  if (!match) return;
+  def.description = def.description.substring(0, match.index);
+  schema.bsonType = match[1] as JSONSchemaBSONType;
 };
 
 const DefParsers: [ZodFirstPartyTypeKind, DefParser][] = [
